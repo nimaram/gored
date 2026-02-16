@@ -1,10 +1,12 @@
 package ratelimit
 
 import (
+	"math"
+	"net/http"
 	"sync"
 	"time"
+
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type bucket struct {
@@ -13,7 +15,7 @@ type bucket struct {
 }
 
 var (
-	mutex      sync.Mutex
+	mutex   sync.Mutex
 	buckets = map[string]*bucket{}
 )
 
@@ -34,9 +36,11 @@ func Middleware() gin.HandlerFunc {
 		}
 
 		elapsed := time.Since(b.last)
-		if elapsed >= leakRate {
-			b.tokens = capacity
-			b.last = time.Now()
+		tokensToAdd := int(elapsed / leakRate)
+
+		if tokensToAdd > 0 {
+			b.tokens = int(math.Min(float64(capacity), float64(b.tokens+tokensToAdd)))
+			b.last = b.last.Add(time.Duration(tokensToAdd) * leakRate)
 		}
 
 		if b.tokens <= 0 {

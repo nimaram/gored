@@ -8,8 +8,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-
-func main(ctx context.Context) {
+func Worker() {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{RedpandaUrl},
 		Topic:   "tasks",
@@ -24,7 +23,8 @@ func main(ctx context.Context) {
 
 		go func(m kafka.Message) {
 			log.Println("processing:", string(m.Value))
-			time.Sleep(2 * time.Second) // sth or a kind of heavy job
+			time.Sleep(750 * time.Millisecond) // sth or a kind of heavy job
+			log.Println("Job done: ", string(m.Value))
 		}(msg)
 	}
 }

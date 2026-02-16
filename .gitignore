@@ -32,6 +32,7 @@ tmp/
 # --- Editor / IDE Specific ---
 # VS Code
 .vscode/
+.cursor/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
