@@ -24,6 +24,7 @@ const (
 	leakRate = time.Second
 )
 
+// TODO : optimize this function by either refactoring or redesigning the leaky bucket
 func Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ip := c.ClientIP()
